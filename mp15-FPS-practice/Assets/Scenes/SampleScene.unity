@@ -218,6 +218,10 @@ PrefabInstance:
       propertyPath: BulletPool
       value: 
       objectReference: {fileID: 2054493313}
+    - target: {fileID: 5269094285840378301, guid: 7581c2d72376e3b4aa508e7260377d49, type: 3}
+      propertyPath: <Name>k__BackingField
+      value: "\uD130\uB81B"
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

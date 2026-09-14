@@ -16,13 +16,11 @@ public class PlayerUIController : MonoBehaviour
 
     public void RefreshAmmoUI(int Ammo)
     {
-        Debug.Log("총알 수 변동 감지됨");
         _ammo.text = $"{Ammo} / {_weaponData.MaxAmmo}";
     }
 
     public void RefreshHealthUI(int Health)
     {
-        Debug.Log("체력 변동 감지됨");
         _health.text = $"{Health}";
     }
 
