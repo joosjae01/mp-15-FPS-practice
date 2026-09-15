@@ -20,9 +20,6 @@ public class PlayerWeapon : MonoBehaviour
     [SerializeField] private float _grenadeRange;
     [SerializeField] private int _grenadeDamage;
 
-    private WaitForSeconds _WaitCoolDown;
-
-
     private WeaponData _weaponData;
     private Transform _cameraTransform;
     private Outline _outline;
@@ -62,7 +59,7 @@ public class PlayerWeapon : MonoBehaviour
 
     private IEnumerator FireRoutine()
     {
-        yield return _WaitCoolDown;
+        yield return new WaitForSeconds(_weaponData.CoolDown);
         _isOnFire = true;
     }
 
@@ -154,6 +151,5 @@ public class PlayerWeapon : MonoBehaviour
         _combatUI.SetWeaponData(_weaponData);
         _combatUI.gameObject.SetActive(false);
         _weaponData.CurrentAmmo.Value = _weaponData.MaxAmmo;
-        _WaitCoolDown = new WaitForSeconds(_weaponData.CoolDown);
     }
 }

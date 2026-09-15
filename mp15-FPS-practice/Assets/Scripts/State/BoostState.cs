@@ -28,12 +28,12 @@ public class BoostState : MonoBehaviour, IState
     public void StartState()
     {
         _playerData.MoveSpeed += _boostSpeed;
-        _weaponData.CoolDown *= _boostCoolDown;
+        _weaponData.CoolDown /= _boostCoolDown;
     }
 
     public void EndState()
     {
         _playerData.MoveSpeed -= _boostSpeed;
-        _weaponData.CoolDown /= _boostCoolDown;
+        _weaponData.CoolDown *= _boostCoolDown;
     }
 }
