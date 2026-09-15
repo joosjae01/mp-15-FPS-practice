@@ -97,13 +97,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed91f5e301fd39843a1c15cfce03216e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <Name>k__BackingField: Turret
+  <Name>k__BackingField: "\uD130\uB81B"
   _currentHealth: 50
   <MaxHealth>k__BackingField: 50
   <AttackDamage>k__BackingField: 0
   TurretRange: 0
   RotateSpeed: 5
-  Cooldown: 3
+  Cooldown: 0.5
   BulletPool: {fileID: 0}
 --- !u!114 &4664063578389665739
 MonoBehaviour:

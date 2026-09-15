@@ -4,46 +4,48 @@ using UnityEngine;
 
 public class PlayerWeapon : MonoBehaviour
 {
+    [SerializeField] private PlayerCombatUIController _combatUI;
+
+    [SerializeField] private KeyCode _grenadeKey = KeyCode.Alpha3;
     [SerializeField] private KeyCode _fireKey = KeyCode.Mouse0;
     [SerializeField] private KeyCode _reloadKey = KeyCode.R;
-    [SerializeField] private KeyCode _grenadeKey = KeyCode.Alpha3;
-    [SerializeField] private PlayerCombatUIController _combatUI;
-    [SerializeField] private EffectManager _flameEffect;
+    
     [SerializeField] private EffectManager _bulletEffectPrefab;
+    [SerializeField] private EffectManager _flameEffect;
+    
+    [SerializeField] private LayerMask _targetMask;
     [SerializeField] private Grenade _grenadePrefab;
-    [SerializeField] private float _grenadeRange;
-    [SerializeField] private int _grenadeDamage;
     [SerializeField] private float _grenadeDuration;
     [SerializeField] private float _maxGrenadeForce;
-    [SerializeField] private LayerMask _targetMask;
+    [SerializeField] private float _grenadeRange;
+    [SerializeField] private int _grenadeDamage;
+
 
     private WeaponData _weaponData;
-    
-    private Outline _outline;
     private Transform _cameraTransform;
+    private Outline _outline;
+
     private float _currentCooldown;
     private float _currentReload;
-    private float _grenadeForce;    
+    private float _grenadeForce;
+
+    private bool _isDetachedGrenade => Input.GetKeyUp(_grenadeKey);
     private bool _isPressedReload => Input.GetKeyDown(_reloadKey);
     private bool _isPressedGrenade => Input.GetKey(_grenadeKey);
-    private bool _isDetachedGrenade => Input.GetKeyUp(_grenadeKey);
-    private bool _isOnTime => _currentCooldown >= _weaponData.CoolDown;
     private bool _isPressedFire => Input.GetKey(_fireKey);
-    private bool _isAmmoEnough => _weaponData.CurrentAmmo.Value > 0;
-    private bool _canFire => _isPressedFire && _isAmmoEnough && _isOnTime && !_isReloading;
 
+    private bool _canFire => _isPressedFire && _isAmmoEnough && _isOnTime && !_isReloading;
+    private bool _isOnTime => _currentCooldown >= _weaponData.CoolDown;
+    private bool _isAmmoEnough => _weaponData.CurrentAmmo.Value > 0;
+
+    
     private bool _isReloadOnTime => _currentReload >= _weaponData.ReloadTime;
-    private bool _isReloading = false;
     private bool _canReload => _isPressedReload && !_isReloading;
+    private bool _isReloading = false;
+
 
     private void Awake() => CacheComponents();
-    private void Start()
-    {
-        _outline.enabled = true;
-        _combatUI.SetWeaponData(_weaponData);
-        _combatUI.gameObject.SetActive(false);
-        _weaponData.CurrentAmmo.Value = _weaponData.MaxAmmo;
-    }
+    private void Start() => Init();
     private void Update() {
         UpdateCurrentCooldown();
         ChargeGrenade();
@@ -87,28 +89,24 @@ public class PlayerWeapon : MonoBehaviour
         }
     }
 
-    public void StartReload()
+    public void Reload()
     {
-        if (!_canReload) return;
-
-        _isReloading = true;
-        _combatUI.gameObject.SetActive(true);
+        if(_canReload) StartCoroutine(ReloadRoutine());
     }
 
-    public void EndReload()
+    public IEnumerator ReloadRoutine()
     {
-        if (!_isReloading) return;
+        _isReloading = true;
+        _combatUI.gameObject.SetActive(true);
 
-        _currentReload += Time.deltaTime;
+        yield return new WaitForSeconds(_weaponData.ReloadTime);
 
-        if(_isReloadOnTime)
-        {
-            _currentReload = 0;
-            _isReloading = false;
-            _combatUI.gameObject.SetActive(false);
+        _isReloading = false;
+        _combatUI.gameObject.SetActive(false);
+        _weaponData.CurrentAmmo.Value = _weaponData.MaxAmmo;
 
-            _weaponData.CurrentAmmo.Value = _weaponData.MaxAmmo;
-        }
+        yield break;
+
     }
 
     private IDamageable GetDamageable()
@@ -152,5 +150,13 @@ public class PlayerWeapon : MonoBehaviour
         _cameraTransform = Camera.main.transform;
         _weaponData = GetComponent<WeaponData>();
         _outline = GetComponentInChildren<Outline>();
+    }
+
+    private void Init()
+    {
+        _outline.enabled = true;
+        _combatUI.SetWeaponData(_weaponData);
+        _combatUI.gameObject.SetActive(false);
+        _weaponData.CurrentAmmo.Value = _weaponData.MaxAmmo;
     }
 }

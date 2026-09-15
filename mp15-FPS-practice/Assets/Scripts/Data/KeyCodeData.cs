@@ -9,8 +9,8 @@ public class KeyCodeData : MonoBehaviour
 
     // [ PLAYER MOVEMENT ]
     [SerializeField] private KeyCode _jumpKey = KeyCode.Space;
-    [SerializeField] private KeyCode _slideKey = KeyCode.C;
-    [SerializeField] private KeyCode _sprintKey = KeyCode.LeftShift;
+    //[SerializeField] private KeyCode _slideKey = KeyCode.C;
+    //[SerializeField] private KeyCode _sprintKey = KeyCode.LeftShift;
 
     // [ PLAYER WEAPON ]
     [SerializeField] public KeyCode _fireKey = KeyCode.Mouse0;
@@ -18,5 +18,5 @@ public class KeyCodeData : MonoBehaviour
     [SerializeField] public KeyCode _grenadeKey = KeyCode.Alpha3;
 
     // [ PLAYER UTILITIES] 
-    [SerializeField] public KeyCode _OpenMenuKey = KeyCode.Escape;
+    //[SerializeField] public KeyCode _OpenMenuKey = KeyCode.Escape;
 }
