@@ -64,7 +64,6 @@ public class PlayerWeapon : MonoBehaviour
     {
         yield return _WaitCoolDown;
         _isOnFire = true;
-        yield break;
     }
 
     public void Fire()

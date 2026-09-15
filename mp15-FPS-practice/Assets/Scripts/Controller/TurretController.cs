@@ -18,8 +18,8 @@ public class TurretController : MonoBehaviour, IDamageable
     [SerializeField] private EffectManager _destroyEffect;
     private TurretData _turretData;
     private WaitForSeconds _waitCoolDown;
-    private Coroutine _fireRoutine;
 
+    private bool _isOnFire = true;
     private bool _isPlayerInTrigger => _trigger._playerTransform != null;
 
     public GameObject GameObject { get => gameObject; }
@@ -32,29 +32,11 @@ public class TurretController : MonoBehaviour, IDamageable
         _waitCoolDown = new WaitForSeconds(_turretData.Cooldown);
     }
 
-    private void Start()
-    {
-
-    }
-
     private void Update()
     {
         RayShotToPlayer();
         Rotate();
-        RotateToPlayer();
-    }
-
-    private void RunFireRoutine()
-    {
-        if (_fireRoutine != null) return;
-        _fireRoutine = StartCoroutine(FireRoutine());
-    }
-
-    private void StopFireRoutine()
-    {
-        if (_fireRoutine == null) return;
-        StopCoroutine(_fireRoutine);
-        _fireRoutine = null;
+        Fire();
     }
 
     private void RayShotToPlayer()
@@ -85,32 +67,29 @@ public class TurretController : MonoBehaviour, IDamageable
             }
         }
     }
-    private void RotateToPlayer()
+    private void Fire()
     {
-        if (_isPlayerInSight && _isPlayerInTrigger)
-        {
-            Vector3 look = new Vector3(
-            _trigger._playerTransform.position.x,
-            _headTransform.position.y,
-            _trigger._playerTransform.position.z
-            );
-            _headTransform.LookAt(look);
+        if (!_isPlayerInSight || !_isPlayerInTrigger) return;
 
-            RunFireRoutine();
-        }
-        else
+        Vector3 look = new Vector3(
+        _trigger._playerTransform.position.x,
+        _headTransform.position.y,
+        _trigger._playerTransform.position.z
+        );
+        _headTransform.LookAt(look);
+
+        if (_isOnFire)
         {
-            StopFireRoutine();
+            SpawnBullet();
+            _isOnFire = false;
+            StartCoroutine(FireRoutine());
         }
     }
 
     private IEnumerator FireRoutine()
     {
-        while (true)
-        {
-            yield return _waitCoolDown;
-            SpawnBullet();
-        }
+        yield return _waitCoolDown;
+        _isOnFire = true;
     }
 
     private void Rotate()
