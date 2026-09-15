@@ -34,8 +34,9 @@ public class PlayerWeapon : MonoBehaviour
     private bool _isPressedReload => Input.GetKeyDown(_reloadKey);
     private bool _isPressedGrenade => Input.GetKey(_grenadeKey);
     private bool _isPressedFire => Input.GetKey(_fireKey);
+    private bool _isOnFire = true;
 
-    private bool _canFire => _isPressedFire && _isAmmoEnough && !_isReloading;
+    private bool _canFire => _isPressedFire && _isAmmoEnough && !_isReloading && _isOnFire;
     private bool _isAmmoEnough => _weaponData.CurrentAmmo.Value > 0;
 
     
@@ -50,18 +51,6 @@ public class PlayerWeapon : MonoBehaviour
         Fire();
     }
 
-    public void Fire()
-    {
-        if (!_canFire)
-        {
-            StopFireRoutine();
-        }
-        else
-        {
-            RunFireRoutine();
-        }
-    }
-
     public void ThrowGrenade()
     {
         if(!_isDetachedGrenade) return;
@@ -73,32 +62,24 @@ public class PlayerWeapon : MonoBehaviour
         _grenadeForce = 0;
     }
 
-    private void RunFireRoutine()
-    {
-        if (_fireRoutine != null) return;
-        _fireRoutine = StartCoroutine(FireRoutine());
-        Debug.Log("생성됨!");
-    }
-
-    private void StopFireRoutine()
-    {
-        if (_fireRoutine == null) return;
-        StopCoroutine(_fireRoutine);
-        _fireRoutine = null;
-        Debug.Log("비생성됨");
-    }
-
     private IEnumerator FireRoutine()
     {
-        while (true)
-        {
-            yield return _WaitCoolDown;
-            _weaponData.CurrentAmmo.Value--;
-            PlayFlameEffect();
-            IDamageable target = GetDamageable();
+        yield return _WaitCoolDown;
+        _isOnFire = true;
+        yield break;
+    }
 
-            if (target != null) target.TakeDamage(_weaponData.Damage);
-        }
+    private void Fire()
+    {
+        if (!_canFire) return;
+
+        _weaponData.CurrentAmmo.Value--;
+        PlayFlameEffect();
+        IDamageable target = GetDamageable();
+
+        if (target != null) target.TakeDamage(_weaponData.Damage);
+        _isOnFire = false;
+        StartCoroutine(FireRoutine());
     }
 
     private void ChargeGrenade()
