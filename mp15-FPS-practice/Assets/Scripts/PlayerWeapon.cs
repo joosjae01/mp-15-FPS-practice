@@ -20,13 +20,14 @@ public class PlayerWeapon : MonoBehaviour
     [SerializeField] private float _grenadeRange;
     [SerializeField] private int _grenadeDamage;
 
+    private Coroutine _fireRoutine;
+    private WaitForSeconds _WaitCoolDown;
+
 
     private WeaponData _weaponData;
     private Transform _cameraTransform;
     private Outline _outline;
 
-    private float _currentCooldown;
-    private float _currentReload;
     private float _grenadeForce;
 
     private bool _isDetachedGrenade => Input.GetKeyUp(_grenadeKey);
@@ -34,12 +35,10 @@ public class PlayerWeapon : MonoBehaviour
     private bool _isPressedGrenade => Input.GetKey(_grenadeKey);
     private bool _isPressedFire => Input.GetKey(_fireKey);
 
-    private bool _canFire => _isPressedFire && _isAmmoEnough && _isOnTime && !_isReloading;
-    private bool _isOnTime => _currentCooldown >= _weaponData.CoolDown;
+    private bool _canFire => _isPressedFire && _isAmmoEnough && !_isReloading;
     private bool _isAmmoEnough => _weaponData.CurrentAmmo.Value > 0;
 
     
-    private bool _isReloadOnTime => _currentReload >= _weaponData.ReloadTime;
     private bool _canReload => _isPressedReload && !_isReloading;
     private bool _isReloading = false;
 
@@ -47,23 +46,20 @@ public class PlayerWeapon : MonoBehaviour
     private void Awake() => CacheComponents();
     private void Start() => Init();
     private void Update() {
-        UpdateCurrentCooldown();
         ChargeGrenade();
+        Fire();
     }
 
     public void Fire()
     {
-        if (!_canFire) return;
-
-        _weaponData.CurrentAmmo.Value--;
-        _currentCooldown = 0;
-        PlayFlameEffect();
-
-        IDamageable target = GetDamageable();
-
-        if (target == null) return;
-
-        target.TakeDamage(_weaponData.Damage);
+        if (!_canFire)
+        {
+            StopFireRoutine();
+        }
+        else
+        {
+            RunFireRoutine();
+        }
     }
 
     public void ThrowGrenade()
@@ -75,6 +71,34 @@ public class PlayerWeapon : MonoBehaviour
 
         grenade.Throw(transform.forward * _grenadeForce + transform.up * _grenadeForce);
         _grenadeForce = 0;
+    }
+
+    private void RunFireRoutine()
+    {
+        if (_fireRoutine != null) return;
+        _fireRoutine = StartCoroutine(FireRoutine());
+        Debug.Log("생성됨!");
+    }
+
+    private void StopFireRoutine()
+    {
+        if (_fireRoutine == null) return;
+        StopCoroutine(_fireRoutine);
+        _fireRoutine = null;
+        Debug.Log("비생성됨");
+    }
+
+    private IEnumerator FireRoutine()
+    {
+        while (true)
+        {
+            yield return _WaitCoolDown;
+            _weaponData.CurrentAmmo.Value--;
+            PlayFlameEffect();
+            IDamageable target = GetDamageable();
+
+            if (target != null) target.TakeDamage(_weaponData.Damage);
+        }
     }
 
     private void ChargeGrenade()
@@ -126,12 +150,6 @@ public class PlayerWeapon : MonoBehaviour
         return damageable;
     }
 
-    private void UpdateCurrentCooldown()
-    {
-        if (_isOnTime) return;
-        _currentCooldown += Time.deltaTime;
-    }
-
     private void PlayFlameEffect()
     {
         _flameEffect.gameObject.SetActive(true);
@@ -158,5 +176,6 @@ public class PlayerWeapon : MonoBehaviour
         _combatUI.SetWeaponData(_weaponData);
         _combatUI.gameObject.SetActive(false);
         _weaponData.CurrentAmmo.Value = _weaponData.MaxAmmo;
+        _WaitCoolDown = new WaitForSeconds(_weaponData.CoolDown);
     }
 }

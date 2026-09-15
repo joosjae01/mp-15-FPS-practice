@@ -104,7 +104,6 @@ public class TurretController : MonoBehaviour, IDamageable
         }
     }
 
-
     private IEnumerator FireRoutine()
     {
         while (true)
