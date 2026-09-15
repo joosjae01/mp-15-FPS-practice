@@ -20,7 +20,6 @@ public class PlayerWeapon : MonoBehaviour
     [SerializeField] private float _grenadeRange;
     [SerializeField] private int _grenadeDamage;
 
-    private Coroutine _fireRoutine;
     private WaitForSeconds _WaitCoolDown;
 
 
@@ -48,7 +47,6 @@ public class PlayerWeapon : MonoBehaviour
     private void Start() => Init();
     private void Update() {
         ChargeGrenade();
-        Fire();
     }
 
     public void ThrowGrenade()
@@ -69,7 +67,7 @@ public class PlayerWeapon : MonoBehaviour
         yield break;
     }
 
-    private void Fire()
+    public void Fire()
     {
         if (!_canFire) return;
 

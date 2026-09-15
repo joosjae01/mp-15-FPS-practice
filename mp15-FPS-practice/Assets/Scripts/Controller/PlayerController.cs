@@ -27,6 +27,7 @@ public class PlayerController : MonoBehaviour, IInteractor, IDamageable
     {
         _movement.Jump();
         _movement.Rotate();
+        _weapon.Fire();
         _weapon.Reload();
         _weapon.ThrowGrenade();
         DetectInteractable();
