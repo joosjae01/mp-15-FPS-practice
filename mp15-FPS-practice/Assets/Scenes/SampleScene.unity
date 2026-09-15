@@ -168,7 +168,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1540662131493184454, guid: 7581c2d72376e3b4aa508e7260377d49, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 9.97
+      value: 15.22
       objectReference: {fileID: 0}
     - target: {fileID: 1540662131493184454, guid: 7581c2d72376e3b4aa508e7260377d49, type: 3}
       propertyPath: m_LocalPosition.y
@@ -176,7 +176,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1540662131493184454, guid: 7581c2d72376e3b4aa508e7260377d49, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -2
       objectReference: {fileID: 0}
     - target: {fileID: 1540662131493184454, guid: 7581c2d72376e3b4aa508e7260377d49, type: 3}
       propertyPath: m_LocalRotation.w
@@ -218,6 +218,10 @@ PrefabInstance:
       propertyPath: BulletPool
       value: 
       objectReference: {fileID: 2054493313}
+    - target: {fileID: 5269094285840378301, guid: 7581c2d72376e3b4aa508e7260377d49, type: 3}
+      propertyPath: RotateSpeed
+      value: 300
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1624,6 +1628,10 @@ PrefabInstance:
       propertyPath: _combatUI
       value: 
       objectReference: {fileID: 774980077}
+    - target: {fileID: 1753981834606729788, guid: 1c7a1916e058edb439cddfa44184e19f, type: 3}
+      propertyPath: <CoolDown>k__BackingField
+      value: 0.25
+      objectReference: {fileID: 0}
     - target: {fileID: 8907471882182705546, guid: 1c7a1916e058edb439cddfa44184e19f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
