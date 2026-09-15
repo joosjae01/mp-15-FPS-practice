@@ -17,30 +17,44 @@ public class TurretController : MonoBehaviour, IDamageable
     [SerializeField] private float _bulletReturnDelay;
     [SerializeField] private EffectManager _destroyEffect;
     private TurretData _turretData;
+    private WaitForSeconds _waitCoolDown;
+    private Coroutine _fireRoutine;
 
     private bool _isPlayerInTrigger => _trigger._playerTransform != null;
-    private bool _isReadyToFire => _currentCooldown >= _turretData.Cooldown;
 
     public GameObject GameObject { get => gameObject; }
 
     private bool _isPlayerInSight = false;
-    private float _currentCooldown;
 
     private void Awake()
     {
         _turretData = GetComponent<TurretData>();
-    }
-    private void Update()
-    {
-        UpdateCurrentCooldown();
-        RayShotToPlayer();
-        Rotate();
-        Fire();
+        _waitCoolDown = new WaitForSeconds(_turretData.Cooldown);
     }
 
-    private void OnDestroy()
+    private void Start()
     {
-        //PlayExplosionEffect();
+
+    }
+
+    private void Update()
+    {
+        RayShotToPlayer();
+        Rotate();
+        RotateToPlayer();
+    }
+
+    private void RunFireRoutine()
+    {
+        if (_fireRoutine != null) return;
+        _fireRoutine = StartCoroutine(FireRoutine());
+    }
+
+    private void StopFireRoutine()
+    {
+        if (_fireRoutine == null) return;
+        StopCoroutine(_fireRoutine);
+        _fireRoutine = null;
     }
 
     private void RayShotToPlayer()
@@ -71,23 +85,35 @@ public class TurretController : MonoBehaviour, IDamageable
             }
         }
     }
-    private void Fire()
+    private void RotateToPlayer()
     {
-        if (!_isPlayerInSight || !_isPlayerInTrigger) return;
-
-        Vector3 look = new Vector3(
+        if (_isPlayerInSight && _isPlayerInTrigger)
+        {
+            Vector3 look = new Vector3(
             _trigger._playerTransform.position.x,
             _headTransform.position.y,
             _trigger._playerTransform.position.z
             );
-        _headTransform.LookAt(look);
+            _headTransform.LookAt(look);
 
-        if (!_isReadyToFire) return;
-
-        SpawnBullet();
-
-        _currentCooldown = 0f;
+            RunFireRoutine();
+        }
+        else
+        {
+            StopFireRoutine();
+        }
     }
+
+
+    private IEnumerator FireRoutine()
+    {
+        while (true)
+        {
+            yield return _waitCoolDown;
+            SpawnBullet();
+        }
+    }
+
     private void Rotate()
     {
         if (_isPlayerInSight) return;
@@ -95,12 +121,6 @@ public class TurretController : MonoBehaviour, IDamageable
         _headTransform.Rotate(Vector3.up * _turretData.RotateSpeed * Time.deltaTime);
     }
 
-    private void UpdateCurrentCooldown()
-    {
-        if (_isReadyToFire) return;
-
-        _currentCooldown += Time.deltaTime;
-    }
     private void SpawnBullet()
     {
         IPoolable bullet = _turretData.BulletPool.Take();
@@ -112,7 +132,7 @@ public class TurretController : MonoBehaviour, IDamageable
 
     public void TakeDamage(int damage)
     {
-        if(_turretData.CurrentHealth.Value > damage)
+        if (_turretData.CurrentHealth.Value > damage)
         {
             _turretData.CurrentHealth.Value -= damage;
         }
@@ -120,11 +140,5 @@ public class TurretController : MonoBehaviour, IDamageable
         {
             Destroy(gameObject);
         }
-    }
-
-    private void PlayExplosionEffect()
-    {
-        Transform effectTransform = Instantiate(_destroyEffect.transform);
-        effectTransform.position = transform.position;
     }
 }
