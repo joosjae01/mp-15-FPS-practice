@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 public class TurretController : MonoBehaviour, IDamageable
@@ -9,6 +10,7 @@ public class TurretController : MonoBehaviour, IDamageable
     [SerializeField] private Transform _headTransform;
     [SerializeField] private Transform _muzzlePoint;
     [SerializeField] private PlayerTrigger _trigger;
+    [SerializeField] private float _rayShotDelay;
 
     [Header("Bullet")]
     [SerializeField] private BulletController _bulletPrefab;
@@ -18,8 +20,10 @@ public class TurretController : MonoBehaviour, IDamageable
     [SerializeField] private EffectManager _destroyEffect;
     private TurretData _turretData;
     private WaitForSeconds _waitCoolDown;
+    private WaitForSeconds _waitRayShot;
 
     private bool _isOnFire = true;
+    private bool _canRayShot = true;
     private bool _isPlayerInTrigger => _trigger._playerTransform != null;
 
     public GameObject GameObject { get => gameObject; }
@@ -30,6 +34,7 @@ public class TurretController : MonoBehaviour, IDamageable
     {
         _turretData = GetComponent<TurretData>();
         _waitCoolDown = new WaitForSeconds(_turretData.Cooldown);
+        _waitRayShot = new WaitForSeconds(_rayShotDelay);
     }
 
     private void Update()
@@ -42,7 +47,7 @@ public class TurretController : MonoBehaviour, IDamageable
     private void RayShotToPlayer()
     {
         _isPlayerInSight = false;
-        if (!_isPlayerInTrigger) return;
+        if (!_isPlayerInTrigger || !_canRayShot) return;
 
         Vector3 from = new Vector3(
             transform.position.x,
@@ -66,7 +71,17 @@ public class TurretController : MonoBehaviour, IDamageable
                 _isPlayerInSight = true;
             }
         }
+
+        StartCoroutine(RayShotRoutine());
     }
+
+    private IEnumerator RayShotRoutine()
+    {
+        _canRayShot = false;
+        yield return _waitRayShot;
+        _canRayShot = true;
+    }
+
     private void Fire()
     {
         if (!_isPlayerInSight || !_isPlayerInTrigger) return;
