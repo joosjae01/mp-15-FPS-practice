@@ -6,27 +6,22 @@ using UnityEngine.UI;
 
 public class PlayerUIController : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI _ammo;
+    [SerializeField] private TextMeshProUGUI _currentAmmo;
+    [SerializeField] private TextMeshProUGUI _maxAmmo;
     [SerializeField] private TextMeshProUGUI _health;
 
-    private WeaponData _weaponData;
-    private PlayerData _playerData;
-
-    private void Awake() => CacheComponents();
-
-    public void RefreshAmmoUI(int Ammo)
+    public void RefreshCurrentAmmoUI(int Ammo)
     {
-        _ammo.text = $"{Ammo} / {_weaponData.MaxAmmo}";
+        _currentAmmo.text = $"{Ammo}";
+    }
+
+    public void RefreshMaxAmmoUI(int MaxAmmo)
+    {
+        _maxAmmo.text = $"{MaxAmmo}";
     }
 
     public void RefreshHealthUI(int Health)
     {
         _health.text = $"{Health}";
-    }
-
-    private void CacheComponents()
-    {
-        _weaponData = GetComponentInChildren<WeaponData>();
-        _playerData = GetComponent<PlayerData>();
     }
 }

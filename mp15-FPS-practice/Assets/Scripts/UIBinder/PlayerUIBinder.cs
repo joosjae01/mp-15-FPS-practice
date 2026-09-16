@@ -15,13 +15,15 @@ public class PlayerUIBinder : MonoBehaviour
 
     private void BindPlayerUI()
     {
-        _weaponData.CurrentAmmo.AddListener(_playerUI.RefreshAmmoUI);
+        _weaponData.CurrentAmmo.AddListener(_playerUI.RefreshCurrentAmmoUI);
+        _weaponData.MaxAmmo.AddListener(_playerUI.RefreshMaxAmmoUI);
         _playerData.CurrentHealth.AddListener(_playerUI.RefreshHealthUI);
     }
 
     private void UnBindPlayerUI()
     {
-        _weaponData.CurrentAmmo.RemoveListener(_playerUI.RefreshAmmoUI);
+        _weaponData.CurrentAmmo.RemoveListener(_playerUI.RefreshCurrentAmmoUI);
+        _weaponData.MaxAmmo.RemoveListener(_playerUI.RefreshMaxAmmoUI);
         _playerData.CurrentHealth.RemoveListener(_playerUI.RefreshHealthUI);
     }
 

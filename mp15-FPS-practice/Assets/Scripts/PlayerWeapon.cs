@@ -102,7 +102,7 @@ public class PlayerWeapon : MonoBehaviour
 
         _isReloading = false;
         _combatUI.gameObject.SetActive(false);
-        _weaponData.CurrentAmmo.Value = _weaponData.MaxAmmo;
+        _weaponData.CurrentAmmo.Value = _weaponData.MaxAmmo.Value;
 
         yield break;
 
@@ -150,6 +150,6 @@ public class PlayerWeapon : MonoBehaviour
         _outline.enabled = true;
         _combatUI.SetWeaponData(_weaponData);
         _combatUI.gameObject.SetActive(false);
-        _weaponData.CurrentAmmo.Value = _weaponData.MaxAmmo;
+        _weaponData.CurrentAmmo.Value = _weaponData.MaxAmmo.Value;
     }
 }

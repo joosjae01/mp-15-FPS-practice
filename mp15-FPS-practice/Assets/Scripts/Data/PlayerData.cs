@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
 using UnityEngine;
 
 public class PlayerData : MonoBehaviour
@@ -13,7 +14,9 @@ public class PlayerData : MonoBehaviour
     [field: SerializeField] public float MoveSpeed { get; set; }
     [field: SerializeField] public float JumpPower { get; set; }
 
-    private void Start()
+    private void Start() => Init();
+
+    private void Init()
     {
         CurrentHealth.Value = _currentHealth;
     }
