@@ -1,10 +1,22 @@
+using System;
+
 public abstract class MissionBase
 {
+    private Action<int> _onProgressUpdated;
     public int Id;
     public string Name;
     public string Descryption;
     public MissionType Type;
-    public int CurrentProgress;
+    private int _currentProgress;
+    public int CurrentProgress
+    {
+        get => _currentProgress;
+        set
+        {
+            _currentProgress = value;
+            Notify();
+        }
+    }
     public int TargetProgress;
     public bool IsClear;
 
@@ -14,7 +26,7 @@ public abstract class MissionBase
         Name = name;
         Descryption = desc;
         TargetProgress = targetProgress;
-        CurrentProgress = 0;
+        _currentProgress = 0;
         IsClear = false;
     }
 
@@ -25,5 +37,25 @@ public abstract class MissionBase
         {
             IsClear = true;
         }
+    }
+
+    public void AddListener(Action<int> listener)
+    {
+        _onProgressUpdated += listener;
+    }
+
+    public void RemoveListener(Action<int> listener)
+    {
+        _onProgressUpdated -= listener;
+    }
+
+    public void RemoveAllListener()
+    {
+        _onProgressUpdated = null;
+    }
+
+    public void Notify()
+    {
+        _onProgressUpdated?.Invoke(_currentProgress);
     }
 }

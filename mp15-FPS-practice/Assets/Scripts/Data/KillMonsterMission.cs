@@ -7,7 +7,7 @@ public class KillMonsterMission : MissionBase
         TargetMonster = targetMonster;
     }
 
-    public void CheckProgress(IDamageable target)
+    public void CompareTarget(IDamageable target)
     {
         if (IsClear) return;
 
