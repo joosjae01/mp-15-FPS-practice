@@ -11,6 +11,7 @@ public abstract class MonsterData : MonoBehaviour
     public ObservableProperty<int> CurrentHealth = new(0);
     [field: SerializeField] public int MaxHealth { get; set; }
     [field: SerializeField] public int AttackDamage { get; set; }
+    [SerializeField] public MonsterType MonsterType;
 
     private void Start() => Init();
 
