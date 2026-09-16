@@ -8,20 +8,24 @@ public class PlayerController : MonoBehaviour, IInteractor, IDamageable
     public GameObject GameObject { get => gameObject; }
     [SerializeField] private Transform _cameraPivot;
     [SerializeField] private float _detectionRange;
+    [SerializeField] private float _rayDelay;
     [SerializeField] private KeyCode _interactionKey = KeyCode.E;
+    
     private IInteractable _targetInteractable;
+    private WaitForSeconds _waitForRay;
     private PlayerMovement _movement;
     private PlayerWeapon _weapon;
     private PlayerData _playerData;
     private Transform _cameraTransform;
-
+    
     private bool _isPressedInteractionKey => Input.GetKeyDown(_interactionKey);
     private bool _hasTargetInteractable => _targetInteractable != null;
     private bool _canInteract => _isPressedInteractionKey && _hasTargetInteractable;
+    private bool _canRayShot = true;
 
     //  =====   =====   =====   =====   ===== //
     private void Awake() => CacheComponents();
-    private void Start() => Initialize();
+    private void Start() => Init();
     private void FixedUpdate() => _movement.Move();
     private void Update()
     {
@@ -66,6 +70,8 @@ public class PlayerController : MonoBehaviour, IInteractor, IDamageable
 
     public void DetectInteractable()
     {
+        if (!_canRayShot) return;
+
         Ray ray = new Ray(_cameraTransform.position, _cameraTransform.forward);
         RaycastHit hit;
         if (!Physics.Raycast(ray, out hit, _detectionRange))
@@ -87,6 +93,14 @@ public class PlayerController : MonoBehaviour, IInteractor, IDamageable
         _targetInteractable = hit.collider.GetComponent<IInteractable>();
 
         _targetInteractable?.Targeting();
+        StartCoroutine(RayShotRoutine());
+    }
+
+    private IEnumerator RayShotRoutine()
+    {
+        _canRayShot = false;
+        yield return _waitForRay;
+        _canRayShot = true;
     }
 
     public void TryInteract()
@@ -118,9 +132,10 @@ public class PlayerController : MonoBehaviour, IInteractor, IDamageable
         _cameraTransform = Camera.main.transform;
     }
 
-    private void Initialize()
+    private void Init()
     {
         LockCursor();
         _movement.SetPlayerData(_playerData);
+        _waitForRay = new WaitForSeconds(_rayDelay);
     }
 }
