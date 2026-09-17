@@ -99,6 +99,7 @@ MonoBehaviour:
   _currentHealth: 60
   <MaxHealth>k__BackingField: 60
   <AttackDamage>k__BackingField: 5
+  MonsterType: 0
   <MoveSpeed>k__BackingField: 2.5
   <AttackRange>k__BackingField: 3
   <AttackCoolDown>k__BackingField: 5

@@ -27,6 +27,16 @@ public class BulletController : MonoBehaviour, IPoolable
         ReturnToPool();
     }
 
+    private void OnEnable()
+    {
+        Debug.Log("OnEnable");
+    }
+
+    private void Start()
+    {
+        Debug.Log("Start");
+    }
+
     private void Update()
     {
         MoveForward();
